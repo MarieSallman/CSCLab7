@@ -1,5 +1,8 @@
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Random;
 
 public class LCSBetter {
@@ -50,7 +53,9 @@ public class LCSBetter {
 
         // if true, then no common substring exists
         if (len == 0) {
-            //System.out.println("No Common Substring");
+            System.out.println("String 1: " + X);
+            System.out.println("String 2: " + Y);
+            System.out.println("No Common Substring");
             return;
         }
 
@@ -70,6 +75,9 @@ public class LCSBetter {
 
         // required longest common substring
         //System.out.println(resultStr);
+        System.out.println("String 1: " + X);
+        System.out.println("String 2: " + Y);
+        System.out.println("Length of Longest Common Substring is " + resultStr.length());
     }
 
     static String getSaltString(int count) {
@@ -113,17 +121,18 @@ public class LCSBetter {
 
     // Driver code
     public static void main(String[] args) {
-        String X = "OldSite:GeeksforGeeks.org";
-        String Y = "NewSite:GeeksQuiz.com";
+        String X = getSaltString(10);
+        String Y = "Z";
 
         int m = X.length();
         int n = Y.length();
 
         printLCSubStr(X, Y, m, n);
-
-        runFullExperiment("LCSBetter-Worst-Exp1.txt");
-        runFullExperiment("LCSBetter-Worst-Exp2.txt");
-        runFullExperiment("LCSBetter-Worst-Exp3.txt");
+/*
+        runFullExperiment("LCSBetter-English2-Exp1.txt");
+        runFullExperiment("LCSBetter-English2-Exp2.txt");
+        runFullExperiment("LCSBetter-English2-Exp3.txt");
+  */
     }
 
     static void runFullExperiment(String resultsFileName){
@@ -154,7 +163,7 @@ public class LCSBetter {
 
         resultsWriter.flush();
 
-        for(int inputNumber=1;inputNumber<=4096; inputNumber*=2) {
+        for(int inputNumber=1;inputNumber<=1024; inputNumber*=2) {
 
             // progress message...
 
@@ -192,18 +201,45 @@ public class LCSBetter {
             for (long trial = 0; trial < numberOfTrials; trial++) {
 
                 int count = inputNumber;
-
+/*
                 String X = getSaltString2(count);
                 String Y = getSaltString3(count);
                 String Z = "A";
                 Y = Y + Z;
-                System.out.println(Y);
 
                 int m = X.length();
                 int n = Y.length();
+*/
+
+                String bookString = "";
+                try{
+                    bookString = new String(Files.readAllBytes(Paths.get("/home/marie/Results/book3.txt")));
+
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
+
+                String bookString2 = "";
+                try{
+                    bookString2 = new String(Files.readAllBytes(Paths.get("/home/marie/Results/book4.txt")));
+
+                } catch (IOException e){
+                    e.printStackTrace();
+                }
 
 
+                Random rn = new Random();
+                int answer = rn.nextInt(bookString.length() - count);
 
+                Random rn2 = new Random();
+                int answer2 = rn2.nextInt(bookString2.length() - count);
+
+                String X = bookString.substring(answer, answer + count);
+                String Y = bookString2.substring(answer2, answer2 + count);
+
+
+                int m = X.length();
+                int n = Y.length();
 
                 TrialStopwatch.start(); // *** uncomment this line if timing trials individually
 

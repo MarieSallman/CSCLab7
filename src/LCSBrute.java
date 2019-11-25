@@ -1,4 +1,6 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Random;
 
 public class LCSBrute {
@@ -10,25 +12,35 @@ public class LCSBrute {
     static PrintWriter resultsWriter;
 
     public static void main(String[] args) {
-        String A = "abcdefghi";
-        String B = "?abcdefghi";
+        String A = "abcdexabcabcxabcdef";
+        String B = "abcdeabcabcdfabcdefg";
         int count = 18;
-        lcsBrute(A,B);
+        System.out.println("String 1: " + A);
+        System.out.println("String 2: " + B);
+        System.out.println(lcsBrute(A,B));
+/*      //Used for testing purposes
 
         String C = getSaltString(count);
         String D = getSaltString(count);
         String E = getSaltString(count) + C;
 
-        System.out.println(C);
-        System.out.println(E);
-        lcsBrute(C,E);
+        System.out.println("String 1: " + C);
+        System.out.println("String 2: " + E);
+        System.out.println(lcsBrute(C,E));
+*/
 
-        runFullExperiment("LCSBrute-Worst-Exp1.txt");
-        runFullExperiment("LCSBrute-Worst-Exp2.txt");
-        runFullExperiment("LCSBrute-Worst-Exp3.txt");
+
+
+/*      //Used to run full experiments
+        runFullExperiment("LCSBrute-English2-Exp1.txt");
+        runFullExperiment("LCSBrute-English2-Exp2.txt");
+        runFullExperiment("LCSBrute-English2-Exp3.txt");
+*/
+
 
     }
 
+    //Used as main randomizer for all tests to make random strings of a given input size
     static String getSaltString(int count) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder salt = new StringBuilder();
@@ -41,7 +53,7 @@ public class LCSBrute {
         return saltStr;
 
     }
-
+//Used to make string for large amounts of only A to test code
     static String getSaltString2(int count) {
         String SALTCHARS = "A";
         StringBuilder salt = new StringBuilder();
@@ -55,6 +67,7 @@ public class LCSBrute {
 
     }
 
+    //Used to make string for large amounts of only B to test code
     static String getSaltString3(int count) {
         String SALTCHARS = "B";
         StringBuilder salt = new StringBuilder();
@@ -70,6 +83,7 @@ public class LCSBrute {
 
     public static int lcsBrute(String S1, String S2){
 
+        //Setting ints for lengths of string
         int l1 = S1.length();
         int l2 = S2.length();
         int lcsLength = 0;
@@ -77,15 +91,17 @@ public class LCSBrute {
         int lcsStart2 = 0;
         int k;
 
-
+        //Made from pseudocode provided in class
         for (int i = 0; i < l1; i++){
             for (int j = 0; j < l2; j++){
                 for (k = 0; k < l1 - i && k < l2 -j; k++){
                     if (S1.charAt(i + k) != S2.charAt(j + k)){
-                        break;
+                        break;  //If characters are not the same break out of loop
+
                     }
 
                 }
+                //Determine if the current substring length is the longest found
                 if (k > lcsLength){
                     lcsLength = k;
                     lcsStart1 = i;
@@ -93,6 +109,7 @@ public class LCSBrute {
                 }
             }
         }
+
         return lcsLength;
     }
 
@@ -124,7 +141,7 @@ public class LCSBrute {
 
         resultsWriter.flush();
 
-        for(int inputNumber=1;inputNumber<=4096; inputNumber*=2) {
+        for(int inputNumber=1;inputNumber<=1024; inputNumber*=2) {
 
             // progress message...
 
@@ -162,20 +179,47 @@ public class LCSBrute {
             for (long trial = 0; trial < numberOfTrials; trial++) {
 
                 int count = inputNumber;
+/*
+                String C = getSaltString(count);
+                String D = getSaltString(count);
+                //String E = "A";
+                //D = D + E;
+*/
 
-                String C = getSaltString2(count);
-                String D = getSaltString3(count);
-                String E = "A";
-                D = D + E;
+//Used when getting random substrings from full books
+                String bookString = "";
+        try{
+            bookString = new String(Files.readAllBytes(Paths.get("/home/marie/Results/book3.txt")));
+
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+//Used to get second random substring from book
+        String bookString2 = "";
+        try{
+            bookString2 = new String(Files.readAllBytes(Paths.get("/home/marie/Results/book4.txt")));
+
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+//Randomize the area of the book the string is taken from
+        Random rn = new Random();
+        int answer = rn.nextInt(bookString.length() - count);
+//Randomize the area of the book the string is taken from
+        Random rn2 = new Random();
+        int answer2 = rn2.nextInt(bookString2.length() - count);
+
+
 
 
 
                 TrialStopwatch.start(); // *** uncomment this line if timing trials individually
 
 
-                lcsBrute(C,D);
+                // lcsBrute(C,D);
 
-
+                lcsBrute(bookString.substring(answer, answer + count), bookString2.substring(answer2, answer2 + count));
 
 
                 batchElapsedTime = batchElapsedTime + TrialStopwatch.elapsedTime(); // *** uncomment this line if timing trials individually
